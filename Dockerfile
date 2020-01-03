@@ -1,6 +1,18 @@
-FROM alpine:3.7
-RUN apk --no-cache add perl-cgi perl-fcgi perl-fcgi-procmanager
+FROM alpine:3
+
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN apk update
 RUN apk --no-cache add \
+        curl tar make gcc build-base wget gnupg bash \
+        shadow \
+        perl-cgi \
+        perl-fcgi \
+        perl-fcgi-procmanager \
+        perl-app-cpanminus \
+        perl-module-build perl-module-build-tiny \
+        perl-yaml-syck perl-yaml perl-soap-lite perl-ipc-run \
+        perl-http-date perl-dbi perl-dbd-mysql perl-dbd-pg perl-dbd-sqlite perl-plack perl-cgi-psgi perl-gd perl-crypt-openssl-dsa perl-crypt-ssleay \
+        perl-utils \
         php7 \
         php7-bcmath \
         php7-dom \
@@ -30,14 +42,27 @@ RUN apk --no-cache add \
         php7-xml \
         php7-xmlreader \
         php7-xmlwriter \
-        php7-zip \
-COPY ./ /root/
+        php7-zip
+        
+COPY perl-fpm.pl /root/
 
 COPY php.ini /etc/php7/conf.d/50-setting.ini
 COPY php-fpm.conf /etc/php7/php-fpm.conf
 
-CMD perl /root/perl-fpm.pl
-CMD ["php-fpm7", "-F"]
+COPY entrypoint.sh /root/
+
+RUN cpanm LWP::UserAgent
+RUN cpanm Image::Size
+RUN cpanm HTML::Entities
+#RUN cpanm DBD::SQLite2
+RUN cpanm CGI::Parse::PSGI
+#RUN cpanm XMLRPC::Transport::HTTP::Plack
+
+
+RUN groupadd -g 993 nginx
+RUN useradd -r -s /bin/false -u 997 -g 993 nginx
+
+ENTRYPOINT ["sh", "/root/entrypoint.sh"]
 
 EXPOSE 9000
 EXPOSE 9001

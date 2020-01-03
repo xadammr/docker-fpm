@@ -1,7 +1,9 @@
 version: "3"
 services:
-  php-fpm:
-    image: perl-fpm
-    build:
-      context: .
-      dockerfile: Dockerfile
+  docker-fpm:
+    container_name: fpm
+    build: .
+    volumes:
+      - /var/www:/var/www
+      - /var/run:/var/run
+    user: "${UID}:${GID}"

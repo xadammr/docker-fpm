@@ -12,7 +12,8 @@ use FCGI;
 use FCGI::ProcManager;
 use CGI qw/:cgi/;
 
-my $socket_path = '0.0.0.0:9000';
+#my $socket_path = '0.0.0.0:9000';
+my $socket_path = '/var/run/fpm-perl.socket';
 my $listen_queue = 10;
 my $processes = 1;
 my $connections = 10000;
@@ -32,7 +33,10 @@ require $startup if $startup;
 
 my $pm = FCGI::ProcManager->new({ n_processes => $processes });
 
+print "Opening socket and setting permissions...";
 my $socket = FCGI::OpenSocket($socket_path, $listen_queue);
+my $cnt = chown 997, 993, $socket_path;
+
 my $request = FCGI::Request(\*STDIN, \*STDOUT, \*STDOUT, \%ENV, $socket);
 
 $pm->pm_manage();
@@ -47,8 +51,8 @@ while ($request->Accept() >= 0) {
 	unless (my $return = do $ENV{DOCUMENT_ROOT}.$ENV{DOCUMENT_URI}) {
 		if ($@) {
 			print $q->header('text/plain ', '500 Internal Server Error');
-			print "Script `$ENV{DOCUMENT_URI}` is broken.";
-			warn "Script $ENV{DOCUMENT_URI} is broken.\n$@";
+			print "Script `$ENV{DOCUMENT_ROOT}$ENV{DOCUMENT_URI}` is broken.";
+			warn "Script $ENV{DOCUMENT_ROOT}$ENV{DOCUMENT_URI} is broken.\n$@";
 		} elsif (not defined $return) {
 			print $q->header('text/plain ', '404 Not Found');
 			print "Script `$ENV{DOCUMENT_URI}` not found.";
