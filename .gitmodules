@@ -1,3 +1,0 @@
-[submodule "perl-fpm"]
-	path = perl-fpm
-	url = git@github.com:caribe/perl-fpm.git
