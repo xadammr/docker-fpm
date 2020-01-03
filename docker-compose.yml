@@ -7,13 +7,3 @@ services:
       dockerfile: ../Dockerfile
     volumes:
       - "./www:/var/www"
-
-  webserver:
-    image: nginx:alpine
-    volumes:
-      - "./www:/var/www"
-      - "./nginx:/etc/nginx/conf.d"
-    ports:
-       - "0.0.0.0:8080:80"
-    links:
-       - perl-fpm
