@@ -1,9 +1,7 @@
 version: "3"
 services:
-  perl-fpm:
+  php-fpm:
     image: perl-fpm
     build:
-      context: perl-fpm/
-      dockerfile: ../Dockerfile
-    volumes:
-      - "./www:/var/www"
+      context: .
+      dockerfile: Dockerfile
