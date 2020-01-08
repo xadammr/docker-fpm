@@ -10,7 +10,7 @@ RUN apk --no-cache add \
         perl-fcgi-procmanager \
         perl-app-cpanminus \
         perl-module-build perl-module-build-tiny \
-        perl-yaml-syck perl-yaml perl-soap-lite perl-ipc-run \
+        perl-yaml-syck perl-yaml perl-soap-lite perl-ipc-run perl-html-parser perl-libwww \
         perl-http-date perl-dbi perl-dbd-mysql perl-dbd-pg perl-dbd-sqlite perl-plack perl-cgi-psgi perl-gd perl-crypt-openssl-dsa perl-crypt-ssleay \
         perl-utils \
         php7 \
@@ -50,14 +50,6 @@ COPY php.ini /etc/php7/conf.d/50-setting.ini
 COPY php-fpm.conf /etc/php7/php-fpm.conf
 
 COPY entrypoint.sh /root/
-
-RUN cpanm LWP::UserAgent
-RUN cpanm Image::Size
-RUN cpanm HTML::Entities
-#RUN cpanm DBD::SQLite2
-RUN cpanm CGI::Parse::PSGI
-#RUN cpanm XMLRPC::Transport::HTTP::Plack
-
 
 RUN groupadd -g 993 nginx
 RUN useradd -r -s /bin/false -u 997 -g 993 nginx
